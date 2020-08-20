@@ -1,0 +1,14 @@
+/Users/oscaraguilar/Projects/BitsoAPI/WebSocket/bin/Debug/netcoreapp3.1/WebSocket.deps.json
+/Users/oscaraguilar/Projects/BitsoAPI/WebSocket/bin/Debug/netcoreapp3.1/WebSocket.runtimeconfig.json
+/Users/oscaraguilar/Projects/BitsoAPI/WebSocket/bin/Debug/netcoreapp3.1/WebSocket.runtimeconfig.dev.json
+/Users/oscaraguilar/Projects/BitsoAPI/WebSocket/bin/Debug/netcoreapp3.1/WebSocket.dll
+/Users/oscaraguilar/Projects/BitsoAPI/WebSocket/bin/Debug/netcoreapp3.1/WebSocket.pdb
+/Users/oscaraguilar/Projects/BitsoAPI/WebSocket/bin/Debug/netcoreapp3.1/Newtonsoft.Json.dll
+/Users/oscaraguilar/Projects/BitsoAPI/WebSocket/obj/Debug/netcoreapp3.1/WebSocket.csprojAssemblyReference.cache
+/Users/oscaraguilar/Projects/BitsoAPI/WebSocket/obj/Debug/netcoreapp3.1/WebSocket.AssemblyInfoInputs.cache
+/Users/oscaraguilar/Projects/BitsoAPI/WebSocket/obj/Debug/netcoreapp3.1/WebSocket.AssemblyInfo.cs
+/Users/oscaraguilar/Projects/BitsoAPI/WebSocket/obj/Debug/netcoreapp3.1/WebSocket.csproj.CoreCompileInputs.cache
+/Users/oscaraguilar/Projects/BitsoAPI/WebSocket/obj/Debug/netcoreapp3.1/WebSocket.csproj.CopyComplete
+/Users/oscaraguilar/Projects/BitsoAPI/WebSocket/obj/Debug/netcoreapp3.1/WebSocket.dll
+/Users/oscaraguilar/Projects/BitsoAPI/WebSocket/obj/Debug/netcoreapp3.1/WebSocket.pdb
+/Users/oscaraguilar/Projects/BitsoAPI/WebSocket/obj/Debug/netcoreapp3.1/WebSocket.genruntimeconfig.cache
