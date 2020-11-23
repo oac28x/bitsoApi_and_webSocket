@@ -1,4 +1,6 @@
 ﻿using System;
+using WebSocket.DataBase;
+using WebSocket.Interfaces;
 using WebSocket.WebUtilities;
 
 namespace WebSocket
@@ -7,16 +9,25 @@ namespace WebSocket
     {
         static void Main(string[] args)
         {
-            //Create instance WebSokets to listen live trades of suscribed currencies.
-            APIWebSoketChannels webSockets = new APIWebSoketChannels();
-            webSockets.Init();
+            TelegramReporter TelegramBot = new TelegramReporter();
+            try
+            {
+                APIWebSoket BitoWebSocket = new APIWebSoket(TelegramBot);
 
-            //Connect to API and test request balance.
-            APIWebClient api = new APIWebClient();
-            api.RunTest();
+                BitsoNotifier liveTrades = new BitsoNotifier(TelegramBot, BitoWebSocket);
+                liveTrades.Init();
+            }
+            catch //(Exception ex)
+            {
+                TelegramBot.SendMessage("Error, revisar log...");
+            }
+
+            //Persistence Realm Testing ->>
+
+            //RealmControler rc = new RealmControler();
+            //rc.test();
 
             Console.ReadLine();
         }
-        
     }
 }

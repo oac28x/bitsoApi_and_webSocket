@@ -7,9 +7,26 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Realm" Version="5.1.2" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="WebUtilities\" />
     <Folder Include="ExtensionMethods\" />
+    <Folder Include="DataModels\" />
+    <Folder Include="Interfaces\" />
+    <Folder Include="DataBase\" />
+    <Folder Include="DataBase\ODMs\" />
+    <Folder Include="Enums\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="netcoreapp3.1\WebSocket.deps.json" />
+    <None Remove="netcoreapp3.1\WebSocket.runtimeconfig.json" />
+    <None Remove="netcoreapp3.1\WebSocket.pdb" />
+    <None Remove="netcoreapp3.1\Newtonsoft.Json.dll" />
+    <None Remove="netcoreapp3.1\WebSocket.dll" />
+    <None Remove="netcoreapp3.1\WebSocket.runtimeconfig.dev.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="WebUtilities\APIWebClient.cs" />
   </ItemGroup>
 </Project>
