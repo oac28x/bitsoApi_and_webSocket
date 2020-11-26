@@ -1,5 +1,4 @@
 ﻿using System;
-using WebSocket.Enums;
 
 namespace WebSocket.Interfaces
 {
@@ -7,7 +6,7 @@ namespace WebSocket.Interfaces
     {
         event EventHandler<string> OnTradeMessage;
 
-        void Init(params Coin[] coinsSuscription);
+        void Init(params string[] coinsSuscription);
 
         void Stop();
         void Restart();

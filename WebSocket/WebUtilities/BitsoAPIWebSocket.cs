@@ -7,42 +7,35 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using WebSocket.DataModels;
-using WebSocket.Enums;
 using WebSocket.Interfaces;
 
 namespace WebSocket.WebUtilities
 {
-    public class APIWebSoket : IAPIWebSocket
+    public class BitsoAPIWebSocket : IAPIWebSocket
     {
         public event EventHandler<string> OnTradeMessage;
 
         private ClientWebSocket client;
         private CancellationTokenSource cts;
-        private List<Coin> suscriptions;
+        private string[] suscriptions;
 
         private volatile bool readMessages;
 
         //Services
-        ITelegramReporter tr;
+        protected readonly ITelegramReporter tr;
 
-        public APIWebSoket(ITelegramReporter tr)
+        public BitsoAPIWebSocket(ITelegramReporter _tr)
         {
-            this.tr = tr;
+            tr = _tr;
         }
 
-        public void Init(params Coin[] coinsSuscription)
+        public void Init(params string[] _coinsSuscription)
         {
-            Console.WriteLine("Inicializar Bitso WebSocket.");
-
-            client = new ClientWebSocket();
-            cts = new CancellationTokenSource();
-
-            readMessages = true;
-
-            if (coinsSuscription?.Length >= 1)
+            if (_coinsSuscription?.Length >= 1)
             {
-                suscriptions = coinsSuscription.ToList();
-                ConnectToServerAsync(suscriptions);
+                Console.WriteLine("Inicializando WebSocket...");
+                suscriptions = _coinsSuscription;
+                Restart();
             }
             else
             {
@@ -63,20 +56,20 @@ namespace WebSocket.WebUtilities
             client = null;
             cts = null;
 
-            client = new ClientWebSocket();
+            client = new ClientWebSocket(); ;
             cts = new CancellationTokenSource();
             readMessages = true;
 
             ConnectToServerAsync(suscriptions);
         }
 
-        private async void ConnectToServerAsync(List<Coin> coins)
+        private async void ConnectToServerAsync(string[] coins)
         {
             await client.ConnectAsync(new Uri("wss://ws.bitso.com"), cts.Token);
 
-            foreach (Coin coin in coins)
+            foreach (string coin in coins)
             {
-                SendSubscribeAsync(new { action = "subscribe", book = $"{coin}_mxn", type = "trades" });
+                SendSubscribeAsync(new { action = "subscribe", book = coin, type = "trades" });
             }
 
             await Task.Factory.StartNew( async () =>
@@ -104,7 +97,7 @@ namespace WebSocket.WebUtilities
 
                 if(!string.IsNullOrEmpty(bookData.Book))
                 {
-                    OnTradeMessage?.Invoke(bookData, receivedMessage);
+                    OnTradeMessage?.Invoke(bookData, bookData.Book);
                 }
             }
             while (!result.EndOfMessage);
