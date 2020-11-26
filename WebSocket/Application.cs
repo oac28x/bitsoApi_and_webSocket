@@ -11,21 +11,6 @@ namespace WebSocket
         protected readonly IBitsoService bitsoService;
         protected readonly IAPIPrivate bitsoPrivate;
 
-
-        private bool IsProduction = true;
-        //Bitso available coins to pass on Init(...)
-        private readonly string[] books = {
-            "btc_mxn",
-            "eth_mxn",
-            "ltc_mxn",
-            "xrp_mxn",
-            "gnt_mxn",
-            "bat_mxn",
-            "bch_mxn",
-            "dai_mxn",
-            "mana_mxn"
-        };
-
         public Application(IBitsoService _bitsoService, IAPIPrivate _bitsoPrivate, IBitsoNotifier _bitsoNotifier, IAPIWebSocket _bitsoWebSocket, IPrivateTelegramReporter _telegramPrivateService)
         {
             bitsoService = _bitsoService;
@@ -40,12 +25,12 @@ namespace WebSocket
         public void Start()
         {
             //Both need same coins, it is possible to pass using array or one by one
-            bitsoWebSocket.Init(books);  
-            bitsoNotifier.Init(books);
+            bitsoWebSocket.Init(ConfigData.books);  
+            bitsoNotifier.Init(ConfigData.books);
 
 
             //Bitso Trading API
-            //bitsoService.SetEnvironment(IsProduction);
+            //bitsoService.SetEnvironment(ConfigData.IsProduction);
             //var test = bitsoPrivate.GetAccountStatus();
 
             //Console.WriteLine(test.FirstName);

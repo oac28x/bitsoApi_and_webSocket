@@ -15,9 +15,9 @@ namespace WebSocket.WebUtilities
         const string urlBase = "https://api.telegram.org/bot{0}/sendMessage?chat_id={1}&text={2}";
 
         //Change next to your Telegram data.
-        const string apiToken = "1334405247:AAE4dUj0093x3lTaf6G5Rb24Td0PwnQxeBk";
-        const string publicChatId = "-1001414013329";
-        const string myChatId = "514340445";
+        const string apiToken = ConfigData.TelegramApiToken;
+        const string publicChatId = ConfigData.TelegramPublicChatId;
+        const string myChatId = ConfigData.TelegramMyChatId;
 
         public TelegramReporter()
         {

@@ -13,8 +13,8 @@ namespace WebSocket.WebUtilities
     public class Bitso : IBitsoService
     {
         //Create your Bitso API auth data and replace
-        const string BITSO_KEY = "";
-        const string BITSO_SECRET = "";
+        const string BITSO_KEY = ConfigData.BITSO_KEY;
+        const string BITSO_SECRET = ConfigData.BITSO_SECRET;
         const string BITSO_API_VERSION = "/v3/";
 
         string BITSO_BASE_URL = string.Empty;
