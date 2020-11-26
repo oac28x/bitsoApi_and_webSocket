@@ -95,6 +95,8 @@ namespace WebSocket
 
             builder.RegisterType<Bitso>().As<IBitsoService>().SingleInstance();
             builder.RegisterType<BitsoAPIPrivate>().As<IAPIPrivate>().SingleInstance();
+            builder.RegisterType<BitsoAPIPublic>().As<IAPIPublic>().SingleInstance();
+            builder.RegisterType<BitsoTradingControler>().As<IBitsoTrading>().SingleInstance();
 
             builder.RegisterType<ClientWebSocket>();
             builder.RegisterType<CancellationTokenSource>();
