@@ -1,4 +1,5 @@
 ﻿using System;
+using WebSocket.DataBase.ODMs;
 using WebSocket.DataModels;
 
 namespace WebSocket.Interfaces
@@ -7,7 +8,12 @@ namespace WebSocket.Interfaces
     {
         void SendCoinMessage(CoinDataModel coinData, bool type);
         void SendMessage(string message);
+    }
 
-        void Clean();
+    public interface IPrivateTelegramReporter
+    {
+        void SendSellingMessage(BitsoSell coinData);
+        void SendBuyingMessage(BitsoBuy buyData);
+        void SendMessageTest(string message);
     }
 }

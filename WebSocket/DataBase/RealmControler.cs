@@ -26,6 +26,8 @@ namespace WebSocket.DataBase
             config.EncryptionKey = answerKey;
 
             context = Realm.GetInstance(config);
+
+            Console.WriteLine($"Realm Database Inicializada, path: {DBDir}");
         }
 
 

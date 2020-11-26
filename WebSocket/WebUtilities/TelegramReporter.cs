@@ -1,16 +1,23 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using WebSocket.DataBase.ODMs;
 using WebSocket.DataModels;
 using WebSocket.Interfaces;
 
 namespace WebSocket.WebUtilities
 {
-    public class TelegramReporter : ITelegramReporter
+    public class TelegramReporter : ITelegramReporter, IPrivateTelegramReporter
     {
+        //To check Telegram Bot updates, chatID's, GroupID's, etc.
+        //https://api.telegram.org/bot + apiToken + /getUpdates
+
         const string urlBase = "https://api.telegram.org/bot{0}/sendMessage?chat_id={1}&text={2}";
-        const string apiToken = "BotId";
-        const string chatId = "ChatId";
+
+        //Change next to your Telegram data.
+        const string apiToken = ConfigData.TelegramApiToken;
+        const string publicChatId = ConfigData.TelegramPublicChatId;
+        const string myChatId = ConfigData.TelegramMyChatId;
 
         public TelegramReporter()
         {
@@ -19,25 +26,64 @@ namespace WebSocket.WebUtilities
 
         public void SendMessage(string message)
         {
-            TelegramRequestMessage(message);
+            SendPublicMessage(message);
         }
 
         public void SendCoinMessage(CoinDataModel coinData, bool type)
         {
-            TelegramRequestMessage(CreateTelegramMessage(type, ref coinData));
+            SendPublicMessage(CreatePublicMessage(type, ref coinData));
+        }
+
+
+        #region PrivateMessaging
+        public void SendSellingMessage(BitsoSell coinData)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SendBuyingMessage(BitsoBuy buyData)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SendMessageTest(string message)
+        {
+            SendPrivateMessage(message);
+        }
+        #endregion
+
+
+
+
+        /// <summary>
+        /// SendPrivate message adapter method
+        /// </summary>
+        /// <param name="message">Message string</param>
+        private void SendPrivateMessage(string message)
+        {
+            TelegramRequestMessage(message, myChatId);
+        }
+
+        /// <summary>
+        /// SendPublic message adapter method
+        /// </summary>
+        /// <param name="message">Message string</param>
+        private void SendPublicMessage(string message)
+        {
+            TelegramRequestMessage(message, publicChatId);
         }
 
         /// <summary>
         /// Telegram WebRequest Message
         /// </summary>
         /// <param name="message">Message to send TelegramBot</param>
-        private void TelegramRequestMessage(string message)
+        private void TelegramRequestMessage(string message, string _chatId)
         {
             try
             {
                 Task.Run(() =>
                 {
-                    string urlString = string.Format(urlBase, apiToken, chatId, message);
+                    string urlString = string.Format(urlBase, apiToken, _chatId, message);
                     HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlString);
                     request.KeepAlive = false;
                     request.Timeout = 1500;
@@ -47,11 +93,11 @@ namespace WebSocket.WebUtilities
                     {
                         if (response.ContentLength == 0 && response.StatusCode == HttpStatusCode.OK)
                         {
-                            //Message sent
+                            //Message sent action
                         }
                         else
                         {
-                            //Message error
+                            //Message error action
                         }
                     }
                 });
@@ -68,7 +114,7 @@ namespace WebSocket.WebUtilities
         /// <param name="type">Trade type, true = buying, false = selling</param>
         /// <param name="coinData">CoinData</param>
         /// <returns></returns>
-        private string CreateTelegramMessage(bool type, ref CoinDataModel coinData)
+        private string CreatePublicMessage(bool type, ref CoinDataModel coinData)
         {
             string message = string.Empty;
             decimal percentage = decimal.Round((coinData.Price * 100 / coinData.LastPrice) - 100, 2, MidpointRounding.AwayFromZero);
@@ -81,22 +127,17 @@ namespace WebSocket.WebUtilities
                 message += $"{coinData.CoinName} ↓↓BAJA {percentage}%\n";
             }
 
-            message += $"[POld: ${coinData.LastPrice.ToString("D2")}]\n";
-            message += $"[PNew: ${coinData.Price.ToString("D2")}]\n";
-            message += $"[PAvg: ${coinData.Promedio.ToString("D2")}]\n";
-            message += $"[Pmax: ${coinData.MaxPrice.ToString("D2")}]\n";
-            message += $"[Pmin: ${coinData.MinPrice.ToString("D2")}]\n";
+            message += $"[POld: ${coinData.LastPrice.ToString("F")}]\n";
+            message += $"[PNew: ${coinData.Price.ToString("F")}]\n";
+            message += $"[PAvg: ${coinData.Promedio.ToString("F")}]\n";
+            message += $"[Pmax: ${coinData.MaxPrice.ToString("F")}]\n";
+            message += $"[Pmin: ${coinData.MinPrice.ToString("F")}]\n";
 
-            message += $"[Tm: {coinData.MinuteCountTotal} - ${coinData.MinuteAmountTrades.ToString("D2")}]\n";
-            message += $"[Tm↑: {coinData.MinuteCountUp} - ${coinData.MinuteAmountTradesUp.ToString("D2")}]\n";
-            message += $"[Tm↓: {coinData.MinuteCountDown} - ${coinData.MinuteAmountTradesDown.ToString("D2")}]";
+            message += $"[Tm: {coinData.MinuteCountTotal} - ${coinData.MinuteAmountTrades.ToString("F")}]\n";
+            message += $"[Tm↑: {coinData.MinuteCountUp} - ${coinData.MinuteAmountTradesUp.ToString("F")}]\n";
+            message += $"[Tm↓: {coinData.MinuteCountDown} - ${coinData.MinuteAmountTradesDown.ToString("F")}]";
 
             return message;
-        }
-
-        public void Clean()
-        {
-            
         }
     }
 }

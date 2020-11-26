@@ -1,0 +1,36 @@
+﻿{
+  "spanish": {
+    "telegram_public": {
+
+    },
+    "telegram_private": {
+
+    },
+    "init_messages": {
+      "app_init": "Aplicación inicializada.",
+      "trading_init": "Servicio trading inicializado.",
+      "notifier_init": "Servicio notificaciones inicializado.",
+      "telegram_init": "Bot Telegram mensajería inicializado."
+    },
+    "errors": {
+
+    }
+  },
+  "english": {
+    "telegram_public": {
+
+    },
+    "telegram_private": {
+
+    },
+    "init_messages": {
+      "app_init": "Applicacion initialized.",
+      "trading_init": "Trading service initialized.",
+      "notifier_init": "Notification service initialized.",
+      "telegram_init": "Telegram messaging bot initialized."
+    },
+    "errors": {
+
+    }
+  }
+}
