@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using WebSocket.DataModels;
 using WebSocket.Interfaces;
+using WebSocket.Utilities;
 
 namespace WebSocket.Controlers
 {
@@ -55,15 +56,13 @@ namespace WebSocket.Controlers
                 coinsData.Add(coin, new CoinDataModel(coin.ToUpper()));
             }
 
-            //APIWs.Init(coinTypes);
             APIWs.OnTradeMessage += OnTrade;
 
-            
             TimerState timerState = new TimerState { Counter = 0 };
             timer = new Timer(
                 callback: new TimerCallback(CheckMinuteData),
                 state: timerState,
-                dueTime: 0,
+                dueTime: 1000,
                 period: 60000);
         }
 
@@ -81,7 +80,7 @@ namespace WebSocket.Controlers
                     if (coinInfo.MinuteCountUp > 20 && coinInfo.LastPrice > 0)
                     {
                         tr?.SendCoinMessage(coinInfo, true);
-                        OnLotTradeUp?.Invoke(this, coinInfo);
+                        OnLotTradeUp?.Invoke(null, coinInfo.Clone());
                     }
 
                     if (coinInfo.MinuteCountDown > 20 && coinInfo.LastPrice > 0)
@@ -103,9 +102,10 @@ namespace WebSocket.Controlers
 
             if (controlDate.Day != DateTime.Now.Day)
             {
-                ResetData();
+                //Save min, max, close if needed
+                //ResetData();
                 controlDate = DateTime.Now;
-                tr?.SendMessage(">> Limpieza de datos, media noche...");
+                //tr?.SendMessage(">> Limpieza de datos, media noche...");
             }
 
             if (DateTime.Now.Subtract(timeTrading).TotalMinutes > 5)
@@ -131,45 +131,47 @@ namespace WebSocket.Controlers
             {
                 string Ttype;
 
-                cd.CountTradesTotal++;
+                //cd.CountTradesTotal++;
                 cd.Price = p.PriceMXN;
                 cd.MinuteAmountTrades += p.AmountMXN;
 
-                cd.Promedio = decimal.Round(cd.PriceHistory.Average(), 2, MidpointRounding.AwayFromZero);
-                cd.MinPrice = cd.PriceHistory.Min();
-                cd.MaxPrice = cd.PriceHistory.Max();
+                //cd.Promedio = decimal.Round(cd.PriceHistory.Select(x => (decimal)x).Average(), 2, MidpointRounding.AwayFromZero);
+                //cd.MinPrice = cd.PriceHistory.Min();
+                //cd.MaxPrice = cd.PriceHistory.Max();
 
                 if (p.Type)
                 {
                     Ttype = "Venta  - Alza";
-                    cd.CountTradesUp++;
+                    //cd.CountTradesUp++;
+                    //cd.Price.TradeType = true;
                     cd.MinuteAmountTradesUp += p.AmountMXN;
-                    OnTradeUp?.Invoke(this, cd);
+                    OnTradeUp?.Invoke(null, cd.Clone());
                 }
                 else
                 {
                     Ttype = "Compra - Baja";
-                    cd.CountTradesDown++;
+                    //cd.CountTradesDown++;
+                    cd.Price.TradeType = false;
                     cd.MinuteAmountTradesDown += p.AmountMXN;
-                    OnTradeDown?.Invoke(this, cd);
+                    OnTradeDown?.Invoke(null, cd.Clone());
                 }
 
-                Console.WriteLine($"{timeTrading.Hour.ToString("D2")}:{timeTrading.Minute.ToString("D2")}:{timeTrading.Second.ToString("D2")} {cd.CoinName} {Ttype}");
+                Console.WriteLine($"{timeTrading.Hour.ToString("D2")}:{timeTrading.Minute.ToString("D2")}:{timeTrading.Second.ToString("D2")} {cd.CoinName} {Ttype} HistoryCount: {cd.PriceHistory.Count} Halza: {cd.CountTradesUp} Down: {cd.CountTradesDown} RSI: {cd.RSI(50)}");
             }
         }
 
         private void ResetData()
         {
-            foreach (KeyValuePair<string, CoinDataModel> cd in coinsData)
-            {
-                cd.Value.SetInitValues();
-            }
+            //foreach (KeyValuePair<string, CoinDataModel> cd in coinsData)
+            //{
+            //    cd.Value.SetInitValues();
+            //}
         }
 
         public void Dispose()
         {
             //Disposing process call GC
-
+            APIWs.OnTradeMessage -= OnTrade;
             timer?.Dispose();
             GC.SuppressFinalize(this);
         }

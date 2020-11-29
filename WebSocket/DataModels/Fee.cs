@@ -9,14 +9,23 @@ namespace WebSocket.DataModels
         [JsonProperty("book")]
         public string Book { get; set; }
 
-        [JsonProperty("fee_decimal")]
-        public string FeeDecimal { get; set; }
+        [JsonProperty("taker_fee_percent")]
+        public string TakerFeePercet { get; set; }
 
-        [JsonProperty("fee_percent")]
-        public string FeePercent { get; set; }
+        [JsonProperty("maker_fee_percent")]
+        public string MakerFeePercet { get; set; }
 
-        public decimal FeeDecimalAsDecimal { get { return Convert.ToDecimal(FeeDecimal); } }
-        public decimal FeePercentDecimal { get { return Convert.ToDecimal(FeePercent); } }
+        [JsonProperty("taker_fee_decimal")]
+        public string TakerFeeDecimal { get; set; }
+
+        [JsonProperty("maker_fee_decimal")]
+        public string MakerFeeDecimal { get; set; }
+
+
+        public decimal FeeTakerPercentDecimal { get { return Convert.ToDecimal(TakerFeePercet); } }
+        public decimal FeeMakerPercentDecimal { get { return Convert.ToDecimal(MakerFeePercet); } }
+        public decimal FeeTakerDecimalAsDecimal { get { return Convert.ToDecimal(TakerFeeDecimal); } }
+        public decimal FeeMakerDecimalASDecimal { get { return Convert.ToDecimal(MakerFeeDecimal); } }
     }
 
 

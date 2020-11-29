@@ -14,9 +14,6 @@ namespace WebSocket
 {
     static class Program
     {
-        
-
-
         private static IContainer container;
         public static IContainer IoC
         {
@@ -78,7 +75,6 @@ namespace WebSocket
         }
 
 
-
         public static T GetInstance<T>()
         {
             return IoC.Resolve<T>();
@@ -89,7 +85,9 @@ namespace WebSocket
             ContainerBuilder builder = new ContainerBuilder();
 
             builder.RegisterType<Application>();
+
             builder.RegisterType<TelegramReporter>().As<ITelegramReporter>().As<IPrivateTelegramReporter>().SingleInstance();
+
             builder.RegisterType<BitsoAPIWebSocket>().As<IAPIWebSocket>().SingleInstance();
             builder.RegisterType<BitsoNotifier>().As<IBitsoNotifier>().SingleInstance();
 
@@ -98,6 +96,9 @@ namespace WebSocket
             builder.RegisterType<BitsoAPIPublic>().As<IAPIPublic>().SingleInstance();
             builder.RegisterType<BitsoTradingControler>().As<IBitsoTrading>().SingleInstance();
 
+            builder.RegisterType<SQLiteControler>().As<ISQLiteService>().SingleInstance();
+
+            //Test to pass client and cts through constructor
             builder.RegisterType<ClientWebSocket>();
             builder.RegisterType<CancellationTokenSource>();
 

@@ -32,5 +32,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="WebUtilities\APIWebClient.cs" />
+    <Compile Remove="DataModels\AccountRequiredField.cs" />
+    <Compile Remove="DataModels\NewAccountInfo.cs" />
+    <Compile Remove="WebUtilities\BitsoAccountCreation.cs" />
   </ItemGroup>
 </Project>

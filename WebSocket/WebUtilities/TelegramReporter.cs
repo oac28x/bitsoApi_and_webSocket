@@ -53,8 +53,6 @@ namespace WebSocket.WebUtilities
         #endregion
 
 
-
-
         /// <summary>
         /// SendPrivate message adapter method
         /// </summary>
@@ -117,7 +115,7 @@ namespace WebSocket.WebUtilities
         private string CreatePublicMessage(bool type, ref CoinDataModel coinData)
         {
             string message = string.Empty;
-            decimal percentage = decimal.Round((coinData.Price * 100 / coinData.LastPrice) - 100, 2, MidpointRounding.AwayFromZero);
+            decimal percentage = decimal.Round((coinData.Price.Price * 100 / coinData.LastPrice) - 100, 2, MidpointRounding.AwayFromZero);
             if (type)
             {
                 message += $"{coinData.CoinName} ↑↑ALZA {percentage}%\n";
@@ -128,7 +126,7 @@ namespace WebSocket.WebUtilities
             }
 
             message += $"[POld: ${coinData.LastPrice.ToString("F")}]\n";
-            message += $"[PNew: ${coinData.Price.ToString("F")}]\n";
+            message += $"[PNew: ${coinData.Price.Price.ToString("F")}]\n";
             message += $"[PAvg: ${coinData.Promedio.ToString("F")}]\n";
             message += $"[Pmax: ${coinData.MaxPrice.ToString("F")}]\n";
             message += $"[Pmin: ${coinData.MinPrice.ToString("F")}]\n";

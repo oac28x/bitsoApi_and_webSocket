@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using WebSocket.WebUtilities;
 
 namespace WebSocket.DataModels
@@ -8,58 +9,97 @@ namespace WebSocket.DataModels
     {
         public string CoinName { get; set; }
 
-        private decimal price;
-        public decimal Price
-        {
-            get => price;
-            set
-            {
-                price = value;
-                PriceHistory.Add(value);
-            }
-        }
-
         public decimal LastPrice { get; set; }
 
-        public decimal MinPrice { get; set; }
-        public decimal MaxPrice { get; set; }
-        public decimal Promedio { get; set; }
+        public decimal MinPrice { get { return PriceHistory.Min(); } }
+        public decimal MaxPrice { get { return PriceHistory.Max(); } }
+        public decimal Promedio { get { return decimal.Round(PriceHistory.Select(x => (decimal)x).Average(), 2, MidpointRounding.AwayFromZero); } }
 
-        public uint CountTradesUp { get; set; }
-        public uint CountTradesDown { get; set; }
-        public uint CountTradesTotal { get; set; }
+        public int CountTradesUp { get { return PriceHistory.Select(x => x.TradeType.CompareTo(true)).Count(); } }
+        public int CountTradesDown { get { return PriceHistory.Select(x => x.TradeType.CompareTo(false)).Count(); } }
+        public int CountTradesTotal { get { return PriceHistory.Count(); } }
 
-        public uint LastCountTradesUp { get; set; }
-        public uint LastCountTradesDown { get; set; }
-        public uint LastCountTradesTotal { get; set; }
+        public int LastCountTradesUp { get; set; }
+        public int LastCountTradesDown { get; set; }
+        public int LastCountTradesTotal { get; set; }
 
-        public uint MinuteCountUp { get; set; }
-        public uint MinuteCountDown { get; set; }
-        public uint MinuteCountTotal { get; set; }
+        public int MinuteCountUp { get; set; }
+        public int MinuteCountDown { get; set; }
+        public int MinuteCountTotal { get; set; }
 
         public decimal MinuteAmountTrades { get; set; }
         public decimal MinuteAmountTradesUp { get; set; }
         public decimal MinuteAmountTradesDown { get; set; }
 
-        public List<decimal> PriceHistory { get; private set; }
-
-        public CoinDataModel(string coinName)
+        private TradePrice price = 0;
+        public TradePrice Price
         {
-            CoinName = coinName;
-            PriceHistory = new List<decimal>();
-            SetInitValues();
+            get => price;
+            set
+            {
+                price = value;
+                if (price.Price > 0) PriceHistory.Add(value);
+                if (PriceHistory.Count > 5120) PriceHistory.RemoveAt(PriceHistory.Count - 1);
+            }
+        }
+
+        public List<TradePrice> PriceHistory { get; private set; } = new List<TradePrice>();
+
+        public CoinDataModel(string coinName) { CoinName = coinName; }
+
+        public double RSI(int period = 50)
+        {
+            if (PriceHistory.Count < period) return default(float);
+
+            List<double> sampleData = PriceHistory.Skip(PriceHistory.Count - period).Select(x => (double)x).ToList();  //Take last period
+
+            double gainSum = 0;
+            double lossSum = 0;
+            for (int i = 1; i < period; i++)
+            {
+                double thisChange = sampleData[i] - sampleData[i - 1];
+                if (thisChange > 0)
+                {
+                    gainSum += thisChange;
+                }
+                else
+                {
+                    lossSum += (-1) * thisChange;
+                }
+            }
+
+            double averageGain = gainSum / period;
+            double averageLoss = lossSum / period;
+
+            double rs = averageGain / averageLoss;  //Here you can get RS if needed
+            double rsi = 100 - (100 / (1 + rs));
+
+            return Math.Round(rsi, 2, MidpointRounding.AwayFromZero);
+        }
+
+
+        public CoinDataModel Clone()
+        {
+            CoinDataModel cdm = new CoinDataModel(this.CoinName);
+            cdm.Price = Price;
+            cdm.LastPrice = LastPrice;
+            cdm.LastCountTradesUp = LastCountTradesUp;
+            cdm.LastCountTradesDown = LastCountTradesDown;
+            cdm.LastCountTradesTotal = LastCountTradesTotal;
+            cdm.MinuteCountUp = MinuteCountUp;
+            cdm.MinuteCountDown = MinuteCountDown;
+            cdm.MinuteCountTotal = MinuteCountTotal;
+            cdm.MinuteAmountTrades = MinuteAmountTrades;
+            cdm.MinuteAmountTradesUp = MinuteAmountTradesUp;
+            cdm.MinuteAmountTradesDown = MinuteAmountTradesDown;
+            cdm.PriceHistory = PriceHistory;
+            return cdm;
         }
 
         public void SetInitValues()
         {
-            price = 0;
+            Price = 0;
             LastPrice = 0;
-            MinPrice = 0;
-            MaxPrice = 0;
-            Promedio = 0;
-            CountTradesUp = 0;
-            CountTradesDown = 0;
-            CountTradesTotal = 0;
             LastCountTradesUp = 0;
             LastCountTradesDown = 0;
             LastCountTradesTotal = 0;
@@ -71,5 +111,37 @@ namespace WebSocket.DataModels
             MinuteAmountTradesDown = 0;
             PriceHistory.Clear();
         }
+    }
+
+    public class TradePrice
+    {
+        public bool TradeType { get; set; } //True Sold - False Bought
+        public decimal Price { get; set; }
+
+        public TradePrice(decimal price, bool type)
+        {
+            TradeType = type;
+            Price = price;
+        }
+
+        public static implicit operator decimal(TradePrice p)
+        {
+            return p.Price;
+        }
+
+        public static implicit operator double(TradePrice p)
+        {
+            return (double)p.Price;
+        }
+
+        public static implicit operator TradePrice(decimal price)
+        {
+            return new TradePrice(price, true);
+        }
+
+        //public override string ToString()
+        //{
+        //    return Price.ToString("F");
+        //}
     }
 }

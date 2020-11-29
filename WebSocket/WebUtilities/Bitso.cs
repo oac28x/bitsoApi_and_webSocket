@@ -19,10 +19,7 @@ namespace WebSocket.WebUtilities
 
         string BITSO_BASE_URL = string.Empty;
 
-        public Bitso()
-        {
-
-        }
+        public Bitso() { }
 
         public void SetEnvironment(bool production)
         {
