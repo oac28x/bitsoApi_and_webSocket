@@ -15,8 +15,8 @@ namespace WebSocket.DataModels
         public decimal MaxPrice { get { return PriceHistory.Max(); } }
         public decimal Promedio { get { return decimal.Round(PriceHistory.Select(x => (decimal)x).Average(), 2, MidpointRounding.AwayFromZero); } }
 
-        public int CountTradesUp { get { return PriceHistory.Select(x => x.TradeType.CompareTo(true)).Count(); } }
-        public int CountTradesDown { get { return PriceHistory.Select(x => x.TradeType.CompareTo(false)).Count(); } }
+        public int CountTradesUp { get { return PriceHistory.Where(x => x.TradeType).Count(); } }
+        public int CountTradesDown { get { return PriceHistory.Where(x => !x.TradeType).Count(); } }
         public int CountTradesTotal { get { return PriceHistory.Count(); } }
 
         public int LastCountTradesUp { get; set; }
@@ -98,7 +98,7 @@ namespace WebSocket.DataModels
 
         public void SetInitValues()
         {
-            Price = 0;
+            //Price = 0;
             LastPrice = 0;
             LastCountTradesUp = 0;
             LastCountTradesDown = 0;
